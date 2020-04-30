@@ -26,9 +26,9 @@ class Home extends React.Component {
               <Text style={ styles.text_button }>Arrêter</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => this.navigation.navigate("Sessions")}>
             <View style={ styles.button }>
-              <Text style={ styles.text_button }>Choisir une scéance</Text>
+              <Text style={ styles.text_button }>Choisir une séance</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
-    elevation: 3,
-    borderRadius: 30
+    borderRadius: 30,
+    elevation: 3
   },
   text_button: {
     fontSize: 19,
