@@ -1,11 +1,15 @@
+// Vue "Settings"
+
 import React from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import BackButton from "./BackButton";
 
 class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.navigation = props.navigation;
   }
+
   render() {
     return(
       <View style={ styles.container }>
@@ -13,7 +17,7 @@ class Settings extends React.Component {
         <Text style={ styles.text }>Option Vibration + Son</Text>
         <Text style={ styles.text }>Option Vibration seule</Text>
         <Text style={ styles.text }>Option Son seul</Text>
-        <Button title="Retour" onPress={() => this.navigation.goBack()}/>
+        <BackButton navigation={ this.navigation } />
       </View>
     )
   }

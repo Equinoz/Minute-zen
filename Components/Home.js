@@ -1,10 +1,18 @@
+// Vue "Home"
+
 import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { connect } from "react-redux";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.navigation = props.navigation;
+  }
+
+  // Fonction temporaire
+  _display_session() {
+    console.log(this.props.currentSession);
   }
 
   render() {
@@ -16,7 +24,7 @@ class Home extends React.Component {
         />
         <Text style={ styles.countdown }>17 : 36</Text>
         <View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={ () => this._display_session() }>
             <View style={ styles.button }>
               <Text style={ styles.text_button }>Mettre en pause</Text>
             </View>
@@ -85,4 +93,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Home;
+const mapStateToProps = (state) => {
+  return state;
+};
+
+export default connect(mapStateToProps)(Home);

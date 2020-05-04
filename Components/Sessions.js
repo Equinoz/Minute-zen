@@ -1,7 +1,13 @@
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+// Vue "Sessions"
 
-const sessions = [
+import React from "react";
+import { StyleSheet, View, Text, TouchableOpacity, FlatList } from "react-native";
+import { connect } from "react-redux";
+import BackButton from "./BackButton";
+import AddButton from "./AddButton";
+
+// tableau de séances à supprimer par la suite
+const _sessions = [
   {
     id: 1,
     name: "Simple",
@@ -46,22 +52,14 @@ const sessions = [
 class Sessions extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { sessions: _sessions };
     this.navigation = props.navigation;
   }
 
-  _get_available_sessions() {
-    let availableSessions = [],
-        sumDuration;
+  // Prend en argument un tableau de periods et renvoie la durée totale des périods en heures et minutes si nécéssaire
+  _get_duration(periods) {
+    let seconds = periods.map(x => x.duration).reduce((sum, i) => sum + i);
 
-    for (session of sessions) {
-      sumDuration = 0;
-      session.periods.forEach(period => sumDuration += period.duration);
-      availableSessions.push({ name: session.name, duration: sumDuration, id: session.id });
-    }
-    return availableSessions;
-  }
-
-  _get_duration(seconds) {
     let minutes = Math.floor(seconds / 60);
     if (minutes < 1)
       return seconds + " s";
@@ -71,30 +69,29 @@ class Sessions extends React.Component {
       return Math.floor(minutes / 60) + " h " + ((minutes % 60 != 0) ? minutes % 60 : "") ;
   }
 
+  // Remplace la séance en cours par la séance choisie
+  _select_session (session) {
+    const action = { type: "UPDATE", value: session};
+    this.props.dispatch(action);
+    this.navigation.goBack();
+  }
+
   render() {
     return(
       <View style={ styles.container }>
         <Text style={ styles.label }>Choisissez une séance :</Text>
         <FlatList
           style={ styles.list_sessions }
-          data={ this._get_available_sessions() }
+          data={ this.state.sessions }
           keyExtractor={ (item) => item.id.toString() }
           renderItem={ ({item}) =>
-            <TouchableOpacity style={ styles.session }>
-              <Text style={ styles.text_session }>{ item.name } - { this._get_duration(item.duration) }</Text>
+            <TouchableOpacity style={ styles.session } onPress={ () => this._select_session(item) }>
+              <Text style={ styles.text_session }>{ item.name } - { this._get_duration(item.periods) }</Text>
             </TouchableOpacity>
           }
         />
-        <TouchableOpacity style={ styles.add_new_session } onPress={ () => this.navigation.navigate("AddSession") }>
-          <Image
-            style={ styles.image }
-            source={ require("../pictures/add.png") }
-          />
-          <Text style={ styles.text_new_session }>Créer une séance</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={ styles.back_button } onPress={ () => this.navigation.goBack() }>
-          <Text style={ styles.text_back_button }>Retour</Text>
-        </TouchableOpacity>
+        <AddButton text="Créer une séance" callback={ () => this.navigation.navigate("AddSession") } />
+        <BackButton navigation={ this.navigation } />
       </View>
     )
   }
@@ -128,35 +125,11 @@ const styles = StyleSheet.create({
   text_session: {
     fontSize: 25,
     color: "#0e211f"
-  },
-  add_new_session: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 20
-  },
-  image: {
-    height: 30,
-    width: 30
-  },
-  text_new_session: {
-    paddingLeft: 10,
-    fontSize: 20,
-    color: "#0e211f"
-  },
-  back_button: {
-    backgroundColor: "#215771",
-    height: 60,
-    width: 120,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
-    borderRadius: 30,
-    elevation: 3
-  },
-  text_back_button: {
-    fontSize: 25
   }
-})
+});
 
-export default Sessions;
+const mapStateToProps = (state) => {
+  return state;
+};
+
+export default connect(mapStateToProps)(Sessions);
