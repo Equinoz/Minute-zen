@@ -2,12 +2,11 @@
 
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import BackButton from "./BackButton";
+import CustomButton from "./Components/CustomButton";
 
 class Settings extends React.Component {
   constructor(props) {
     super(props);
-    this.navigation = props.navigation;
   }
 
   render() {
@@ -17,7 +16,7 @@ class Settings extends React.Component {
         <Text style={ styles.text }>Option Vibration + Son</Text>
         <Text style={ styles.text }>Option Vibration seule</Text>
         <Text style={ styles.text }>Option Son seul</Text>
-        <BackButton navigation={ this.navigation } />
+        <CustomButton title="Retour" callback={ () => this.props.navigation.goBack() } />
       </View>
     )
   }

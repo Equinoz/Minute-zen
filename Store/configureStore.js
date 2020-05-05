@@ -1,6 +1,6 @@
 // Configuration du store
 
 import { createStore } from "redux";
-import sessionSelectionReducer from "./Reducers/sessionSelectionReducer";
+import sessionsReducer from "./Reducers/sessionsReducer";
 
-export default createStore(sessionSelectionReducer);
+export default createStore(sessionsReducer);

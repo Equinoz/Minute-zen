@@ -3,10 +3,10 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Home from "../Components/Home";
-import Settings from "../Components/Settings";
-import Sessions from "../Components/Sessions";
-import AddSession from "../Components/AddSession";
+import Home from "../Vues/Home";
+import Settings from "../Vues/Settings";
+import Sessions from "../Vues/Sessions";
+import AddSession from "../Vues/AddSession";
 
 const Stack = createStackNavigator();
 

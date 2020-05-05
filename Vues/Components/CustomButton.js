@@ -1,17 +1,18 @@
-// Bouton de retour à la vue précédente
+// Bouton personnalisé
 
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import PropTypes from "prop-types";
 
-class BackButton extends React.Component {
+class CustomButton extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
     return(
-      <TouchableOpacity style={ styles.back_button } onPress={ () => this.props.navigation.goBack() }>
-        <Text style={ styles.text_back_button }>Retour</Text>
+      <TouchableOpacity style={ styles.back_button } onPress={ this.props.callback }>
+        <Text style={ styles.text_back_button }>{ this.props.title }</Text>
       </TouchableOpacity>
     )
   }
@@ -20,13 +21,13 @@ class BackButton extends React.Component {
 const styles = StyleSheet.create({
   back_button: {
     backgroundColor: "#215771",
-    height: 60,
-    width: 120,
+    height: 50,
+    width: 115,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
     marginBottom: 20,
-    borderRadius: 30,
+    borderRadius: 25,
     elevation: 3
   },
   text_back_button: {
@@ -34,4 +35,9 @@ const styles = StyleSheet.create({
   }
 });
 
-export default BackButton;
+CustomButton.propTypes = {
+  title: PropTypes.string.isRequired,
+  callback: PropTypes.func.isRequired
+}
+
+export default CustomButton;
