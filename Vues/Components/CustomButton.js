@@ -11,7 +11,7 @@ class CustomButton extends React.Component {
 
   render() {
     return(
-      <TouchableOpacity style={ styles.back_button } onPress={ this.props.callback }>
+      <TouchableOpacity style={ this.props.style } onPress={ this.props.callback }>
         <Text style={ styles.text_back_button }>{ this.props.title }</Text>
       </TouchableOpacity>
     )
@@ -19,23 +19,27 @@ class CustomButton extends React.Component {
 };
 
 const styles = StyleSheet.create({
-  back_button: {
+  text_back_button: {
+    fontSize: 25
+  }
+});
+
+CustomButton.defaultProps = {
+  style: {
     backgroundColor: "#215771",
     height: 50,
-    width: 115,
+    width: 120,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
     marginBottom: 20,
     borderRadius: 25,
     elevation: 3
-  },
-  text_back_button: {
-    fontSize: 25
   }
-});
+}
 
 CustomButton.propTypes = {
+  style: PropTypes.object,
   title: PropTypes.string.isRequired,
   callback: PropTypes.func.isRequired
 }

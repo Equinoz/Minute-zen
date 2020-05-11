@@ -34,7 +34,7 @@ class SetPeriod extends React.Component {
           <Text style={ styles.label }>Type de méditation:</Text>
           <Radio value={ this.state.type }
             callback={ (value => this.setState({ type: value })) }
-            radioProps={[ { label: "Assis", value: 0 }, { label: "Debout", value: 1 } ]} />
+            radioProps={[ { label: "Assise", value: 0 }, { label: "Marchée", value: 1 } ]} />
           <Text style={ styles.label }>Coups de cloches au début:</Text>
           <Radio value={ this.state.start }
             callback={ (value => this.setState({ start: value })) }

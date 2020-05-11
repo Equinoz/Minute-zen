@@ -1,7 +1,7 @@
 // Component permettant de modifier le nom de la séance
 
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 import CustomButton from "./CustomButton";
 import PropTypes from "prop-types";
 
@@ -16,7 +16,7 @@ class SetSessionName extends React.Component {
     return (
       <View style={ styles.container }>
         <Text style={ styles.label }>Indiquez le nom de la séance</Text>
-        <TextInput style={ styles.input } onChangeText={ text => this.setState({ name: text }) } placeholder="12 lettres max" maxLength={12} />
+        <TextInput style={ styles.input } onChangeText={ text => this.setState({ name: text }) } placeholder="10 lettres max" maxLength={10} />
         <CustomButton title="Valider" callback={() => this.props.callback(this.state.name) } />
       </View>
     )

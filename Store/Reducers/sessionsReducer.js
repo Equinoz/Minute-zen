@@ -44,7 +44,7 @@ const _sessions = [
 ];
   
 
-const initialState = { currentSession: {}, sessions: _sessions }; // Pas oublier de reinitialiser en 'sessions: []' !!
+const initialState = { currentSession: {}, sessions: _sessions, idUpdatingSession: null }; // Pas oublier de reinitialiser en 'sessions: []' !!
 
 function sessionsReducer (state = initialState, action) {
   let nextState;
@@ -64,6 +64,12 @@ function sessionsReducer (state = initialState, action) {
           action.value,
         ]
       };
+      return nextState || state;
+    case "UPDATE":
+      nextState = {
+        ...state,
+        idUpdatingSession: action.value
+      }
       return nextState || state;
     default:
       return state;

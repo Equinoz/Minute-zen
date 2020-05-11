@@ -5,6 +5,7 @@ import { StyleSheet, View, Text, TouchableOpacity, FlatList } from "react-native
 import { connect } from "react-redux";
 import CustomButton from "./Components/CustomButton";
 import AddButton from "./Components/AddButton";
+import { displayDuration } from "./Components/displayDuration";
 
 class Sessions extends React.Component {
   constructor(props) {
@@ -14,26 +15,20 @@ class Sessions extends React.Component {
   // Prend en argument un tableau de periods et renvoie la durée totale des périods en heures et minutes si nécéssaire
   _get_duration(periods) {
     let seconds = periods.map(x => x.duration).reduce((sum, i) => sum + i);
-
-    let minutes = Math.floor(seconds / 60);
-    if (minutes < 60)
-      return minutes + " min";
-
-    let hours = Math.floor(minutes / 60);
-    minutes = minutes % 60;
-    if (minutes == 0)
-      minutes = "";
-    else if (minutes < 10)
-      minutes = '0' + minutes;
-
-    return hours + " h " + minutes ;
+    return displayDuration(seconds, true);
   }
 
   // Remplace la séance en cours par la séance choisie
-  _select_session (session) {
+  _select_session(session) {
     const action = { type: "SELECT", value: session};
     this.props.dispatch(action);
     this.props.navigation.goBack();
+  }
+
+  _set_session(id) {
+    const action = { type: "UPDATE", value: id};
+    this.props.dispatch(action);
+    this.props.navigation.navigate("SetSession")
   }
 
   render() {
@@ -45,7 +40,7 @@ class Sessions extends React.Component {
           data={ this.props.sessions }
           keyExtractor={ (item) => item.id.toString() }
           renderItem={ ({item}) =>
-            <TouchableOpacity style={ styles.session } onPress={ () => this._select_session(item) }>
+            <TouchableOpacity style={ styles.session } onPress={ () => this._select_session(item) } onLongPress={ () => this._set_session(item.id) }>
               <Text style={ styles.text_session }>{ item.name } - { this._get_duration(item.periods) }</Text>
             </TouchableOpacity>
           }
