@@ -65,12 +65,21 @@ function sessionsReducer (state = initialState, action) {
         ]
       };
       return nextState || state;
+
     case "UPDATE":
       nextState = {
         ...state,
         idUpdatingSession: action.value
       }
       return nextState || state;
+
+    case "DELETE":
+      nextState = {
+        ...state,
+        sessions: state.sessions.filter(item => item.id != action.value)
+      }
+      return nextState || state;
+
     default:
       return state;
   }

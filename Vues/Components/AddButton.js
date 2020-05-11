@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   add_new_element: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 20
+    marginTop: 10
   },
   image: {
     height: 30,

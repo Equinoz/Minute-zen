@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
   },
   list_sessions: {
     flexGrow: 0,
-    marginTop: 20
+    marginTop: 20,
+    marginBottom: 10
   },
   session: {
     backgroundColor: "#286886",

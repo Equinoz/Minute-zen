@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View, Text, FlatList } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text, FlatList, Alert } from "react-native";
 import { connect } from "react-redux";
 import CustomButton from "./Components/CustomButton";
 import { displayDuration } from "./Components/displayDuration";
+import AddButton from "./Components/AddButton";
 
 class SetSession extends React.Component {
   constructor(props) {
@@ -10,6 +11,22 @@ class SetSession extends React.Component {
     this.state = {
       sessionToUpdate: this.props.sessions.find(session => session.id == this.props.idUpdatingSession)
     };
+  }
+
+  delete_session({ id, name }) {
+    Alert.alert(
+      "Suppression de " + name,
+      "Etes-vous sûr de vouloir supprimer cette séance ?",
+      [
+        {text: "Oui", onPress: () => {
+          const action = { type: "DELETE", value: id };
+          this.props.dispatch(action);
+          this.props.navigation.goBack();
+        }},
+        {text: "Annuler", style: "cancel"},
+      ],
+      { cancelable: false }
+    );
   }
 
   render() {
@@ -23,7 +40,7 @@ class SetSession extends React.Component {
           data={ this.state.sessionToUpdate.periods }
           keyExtractor={ (item) => this.state.sessionToUpdate.periods.indexOf(item).toString() }
           renderItem={ ({item}) => 
-            <TouchableOpacity style={ styles.period } onPress={ () => console.log("modif") }>
+            <TouchableOpacity style={ styles.period } onLongPress={ () => console.log("modif") }>
               <Text style={ styles.text_period}>
                 Type: { item.type == "sit" && "assise" }
                 { item.type == "stand" && "marchée" }
@@ -35,8 +52,10 @@ class SetSession extends React.Component {
             </TouchableOpacity>
           }
         />
-          <CustomButton style={ styles.delete_button } title="Supprimer la séance" callback={ () => console.log("Suppression!") } />
-          <CustomButton title="Retour" callback={ () => this.props.navigation.goBack() } />
+        <AddButton text="Ajouter une période" callback={ () => console.log("callback") }/>
+        <CustomButton style={ styles.delete_button } title="Supprimer la séance"
+          callback={ () => this.delete_session(this.state.sessionToUpdate) } />
+        <CustomButton title="Retour" callback={ () => this.props.navigation.goBack() } />
       </View>
     )
   }
@@ -70,12 +89,12 @@ const styles = StyleSheet.create({
   },
   delete_button: {
     backgroundColor: "#c92836",
-    height: 50,
+    height: 45,
     width: 260,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
-    borderRadius: 25,
+    borderRadius: 23,
     elevation: 3
   }
 })
