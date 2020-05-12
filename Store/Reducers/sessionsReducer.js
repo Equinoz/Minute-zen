@@ -18,8 +18,9 @@ const _sessions = [
       {type: "sit", duration: 1000, start: 3, end: 1},
       {type: "interval", duration: 60},
       {type: "sit", duration: 500, start: 1, end: 1},
-      {type: "interval", duration: 60},
-      {type: "sit", duration: 100, start: 1, end: 3},
+      {type: "interval", duration: 180},
+      {type: "sit", duration: 10000, start: 1, end: 3},
+      {type: "interval", duration: 300},
       {type: "sit", duration: 1000, start: 3, end: 1},
       {type: "interval", duration: 60},
       {type: "sit", duration: 500, start: 1, end: 1},
@@ -44,10 +45,11 @@ const _sessions = [
 ];
   
 
-const initialState = { currentSession: {}, sessions: _sessions, idUpdatingSession: null }; // Pas oublier de reinitialiser en 'sessions: []' !!
+const initialState = { currentSession: {}, sessions: _sessions, updatingSession: {}, periodToUpdate: null }; // Pas oublier de reinitialiser en 'sessions: []' !!
 
 function sessionsReducer (state = initialState, action) {
-  let nextState;
+  let nextState,
+      sessions;
   switch(action.type) {
     case "SELECT":
       nextState = {
@@ -60,8 +62,8 @@ function sessionsReducer (state = initialState, action) {
       nextState = {
         ...state,
         sessions: [
-          ...state.sessions,
           action.value,
+          ...state.sessions
         ]
       };
       return nextState || state;
@@ -69,15 +71,34 @@ function sessionsReducer (state = initialState, action) {
     case "UPDATE":
       nextState = {
         ...state,
-        idUpdatingSession: action.value
+        updatingSession: action.value
+      }
+      return nextState || state;
+
+    case "VALID_UPDATING":
+      sessions = [state.updatingSession, ...state.sessions.filter(session => session.id != state.updatingSession.id)];
+      nextState = {
+        ...state,
+        sessions: sessions,
+        updatingSession: {}
       }
       return nextState || state;
 
     case "DELETE":
+      sessions = state.sessions.filter(item => item.id != action.value);
+      sessions.forEach((item, index) => item.id = index);
       nextState = {
         ...state,
-        sessions: state.sessions.filter(item => item.id != action.value)
+        sessions: sessions,
+        updatingSession: {}
       }
+      return nextState || state;
+
+    case "SELECT_PERIOD":
+      nextState = {
+        ...state,
+        periodToUpdate: action.value
+      };
       return nextState || state;
 
     default:

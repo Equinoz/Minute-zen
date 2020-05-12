@@ -25,10 +25,11 @@ class Sessions extends React.Component {
     this.props.navigation.goBack();
   }
 
-  _set_session(id) {
-    const action = { type: "UPDATE", value: id};
+  // Permet de sélectionner la séance à modifier
+  _set_session(updatingSession) {
+    const action = { type: "UPDATE", value: updatingSession};
     this.props.dispatch(action);
-    this.props.navigation.navigate("SetSession")
+    this.props.navigation.navigate("SessionDetails")
   }
 
   render() {
@@ -40,7 +41,7 @@ class Sessions extends React.Component {
           data={ this.props.sessions }
           keyExtractor={ (item) => item.id.toString() }
           renderItem={ ({item}) =>
-            <TouchableOpacity style={ styles.session } onPress={ () => this._select_session(item) } onLongPress={ () => this._set_session(item.id) }>
+            <TouchableOpacity style={ styles.session } onPress={ () => this._select_session(item) } onLongPress={ () => this._set_session(item) }>
               <Text style={ styles.text_session }>{ item.name } - { this._get_duration(item.periods) }</Text>
             </TouchableOpacity>
           }

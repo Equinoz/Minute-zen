@@ -42,19 +42,15 @@ class Radio extends React.Component {
   }
 }
 
-function display_propTypes_error(propName, componentName) {
-  return new Error(
-    "Invalid prop `" + propName + "` supplied to `" + componentName + "`. Validation failed."
-  );
-}
-
 Radio.propTypes = {
-  value: PropTypes.oneOf([0, 1]),
+  value: PropTypes.oneOf([0, 1]).isRequired,
   callback: PropTypes.func.isRequired,
-  radioProps: PropTypes.arrayOf(function(propValue, key, componentName, location, propFullName) {
-    if (typeof propValue[key].label.valueOf() != "string" || propValue[key].label == "" || ![0, 1].includes(propValue[key].value))
-      return display_propTypes_error(propFullName, componentName);
-  })
+  radioProps: PropTypes.arrayOf(
+    PropTypes.shape({
+      label:PropTypes.string.isRequired,
+      value:PropTypes.oneOf([0, 1]).isRequired
+    }).isRequired
+  ).isRequired
 }
 
 export default Radio;

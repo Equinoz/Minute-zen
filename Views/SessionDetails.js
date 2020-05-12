@@ -1,3 +1,5 @@
+// Vue affichant le détail d'une séance donnée
+
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, Text, FlatList, Alert } from "react-native";
 import { connect } from "react-redux";
@@ -5,15 +7,13 @@ import CustomButton from "./Components/CustomButton";
 import { displayDuration } from "./Components/displayDuration";
 import AddButton from "./Components/AddButton";
 
-class SetSession extends React.Component {
+class SessionDetails extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      sessionToUpdate: this.props.sessions.find(session => session.id == this.props.idUpdatingSession)
-    };
   }
 
-  delete_session({ id, name }) {
+  // Affiche un message de confirmation avant la supression
+  _delete_session({ id, name }) {
     Alert.alert(
       "Suppression de " + name,
       "Etes-vous sûr de vouloir supprimer cette séance ?",
@@ -29,18 +29,43 @@ class SetSession extends React.Component {
     );
   }
 
+  // Valide les modifications pour la séance sélectionnée
+  _valid_updating = () => {
+    this.props.dispatch({ type: "VALID_UPDATING" });
+    this.props.navigation.goBack();
+  }
+
+  // Sélectionne la période à modifier
+  _set_period(index) {
+    const action = { type: "SELECT_PERIOD", value: index }
+    this.props.dispatch(action);
+    this.props.navigation.navigate("SetPeriod");
+  }
+
+  // Ajoute une période de méditation précédée d'une période de transition
+  _add_period = () => {
+    let periods = [...this.props.updatingSession.periods,
+      {type: "interval", duration: 300},
+      {type: "sit", duration: 900, start: 1, end: 1},
+    ];
+    let session = { ...this.props.updatingSession, periods };
+    const action = { type: "UPDATE", value: session };
+    this.props.dispatch(action);
+  }
+
   render() {
     return(
       <View style={ styles.container }>
-        <TouchableOpacity onPress={ () => console.log(this.state.sessionToUpdate) }>
-          <Text style={ styles.label }>Modifications: { this.state.sessionToUpdate.name }</Text>
+        <TouchableOpacity onPress={ () => this.props.navigation.navigate("SetSessionName") }>
+          <Text style={ styles.label }>Modifications: { this.props.updatingSession.name }</Text>
         </TouchableOpacity>
         <FlatList
           style={ styles.list_periods }
-          data={ this.state.sessionToUpdate.periods }
-          keyExtractor={ (item) => this.state.sessionToUpdate.periods.indexOf(item).toString() }
+          data={ this.props.updatingSession.periods }
+          keyExtractor={ (item) => this.props.updatingSession.periods.indexOf(item).toString() }
           renderItem={ ({item}) => 
-            <TouchableOpacity style={ styles.period } onLongPress={ () => console.log("modif") }>
+            <TouchableOpacity style={ styles.period }
+              onLongPress={ () => this._set_period(this.props.updatingSession.periods.indexOf(item)) }>
               <Text style={ styles.text_period}>
                 Type: { item.type == "sit" && "assise" }
                 { item.type == "stand" && "marchée" }
@@ -52,10 +77,10 @@ class SetSession extends React.Component {
             </TouchableOpacity>
           }
         />
-        <AddButton text="Ajouter une période" callback={ () => console.log("callback") }/>
+        <AddButton text="Ajouter une période" callback={ this._add_period }/>
         <CustomButton style={ styles.delete_button } title="Supprimer la séance"
-          callback={ () => this.delete_session(this.state.sessionToUpdate) } />
-        <CustomButton title="Retour" callback={ () => this.props.navigation.goBack() } />
+          callback={ () => this._delete_session(this.props.updatingSession) } />
+        <CustomButton title="Valider" callback={ this._valid_updating } />
       </View>
     )
   }
@@ -103,4 +128,4 @@ const mapStateToProps = (state) => {
   return state;
 };
 
-export default connect(mapStateToProps)(SetSession);
+export default connect(mapStateToProps)(SessionDetails);

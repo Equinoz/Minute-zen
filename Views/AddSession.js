@@ -3,8 +3,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import SetSessionName from "./Components/SetSessionName";
-import SetPeriod from "./Components/SetPeriod";
+import SetSessionName from "./SetSessionName";
+import SetPeriod from "./SetPeriod";
 
 class AddSession extends React.Component {
   constructor(props) {
