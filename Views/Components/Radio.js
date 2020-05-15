@@ -40,7 +40,7 @@ class Radio extends React.Component {
       </RadioForm>
     )
   }
-}
+};
 
 Radio.propTypes = {
   value: PropTypes.oneOf([0, 1]).isRequired,
@@ -51,6 +51,6 @@ Radio.propTypes = {
       value:PropTypes.oneOf([0, 1]).isRequired
     }).isRequired
   ).isRequired
-}
+};
 
 export default Radio;

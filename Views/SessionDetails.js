@@ -31,8 +31,9 @@ class SessionDetails extends React.Component {
 
   // Valide les modifications pour la séance sélectionnée
   _valid_updating = () => {
-    this.props.dispatch({ type: "VALID_UPDATING" });
-    this.props.navigation.goBack();
+    const action = (this.props.updatingSession.id == undefined) ? { type: "ADD" } : { type: "VALID_UPDATING" };
+    this.props.dispatch(action);
+    this.props.navigation.navigate("Sessions");
   }
 
   // Sélectionne la période à modifier
@@ -44,12 +45,11 @@ class SessionDetails extends React.Component {
 
   // Ajoute une période de méditation précédée d'une période de transition
   _add_period = () => {
-    let periods = [...this.props.updatingSession.periods,
+    const periods = [...this.props.updatingSession.periods,
       {type: "interval", duration: 300},
       {type: "sit", duration: 900, start: 1, end: 1},
     ];
-    let session = { ...this.props.updatingSession, periods };
-    const action = { type: "UPDATE", value: session };
+    const action = { type: "UPDATE", value: { ...this.props.updatingSession, periods }};
     this.props.dispatch(action);
   }
 
@@ -62,16 +62,16 @@ class SessionDetails extends React.Component {
         <FlatList
           style={ styles.list_periods }
           data={ this.props.updatingSession.periods }
-          keyExtractor={ (item) => this.props.updatingSession.periods.indexOf(item).toString() }
+          keyExtractor={ item => this.props.updatingSession.periods.indexOf(item).toString() }
           renderItem={ ({item}) => 
             <TouchableOpacity style={ styles.period }
               onLongPress={ () => this._set_period(this.props.updatingSession.periods.indexOf(item)) }>
-              <Text style={ styles.text_period}>
+              <Text style={ styles.text_period }>
                 Type: { item.type == "sit" && "assise" }
                 { item.type == "stand" && "marchée" }
                 { item.type == "interval" && "transition" }{"\n"}
                 Durée: { displayDuration(item.duration, true) }</Text>
-              { item.type != "interval" && <Text style={ styles.text_period}>
+              { item.type != "interval" && <Text style={ styles.text_period }>
                 Début: { (item.start == 1) ? "1 coup" : "3 coups" } de cloche{"\n"}
                 Fin: { (item.end == 1) ? "1 coup" : "3 coups" } de cloche</Text> }
             </TouchableOpacity>
@@ -84,7 +84,7 @@ class SessionDetails extends React.Component {
       </View>
     )
   }
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -122,9 +122,9 @@ const styles = StyleSheet.create({
     borderRadius: 23,
     elevation: 3
   }
-})
+});
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return state;
 };
 

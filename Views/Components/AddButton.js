@@ -42,6 +42,6 @@ const styles = StyleSheet.create({
 AddButton.propTypes = {
   text: PropTypes.string.isRequired,
   callback: PropTypes.func.isRequired
-}
+};
 
 export default AddButton;

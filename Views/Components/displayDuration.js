@@ -23,4 +23,4 @@ export const displayDuration = (seconds, literalNotation=false) => {
     else
       return ((m > 9) ? m : "0" + m) + ":" + ((s > 9) ? s : "0" + s);
   }
-}
+};

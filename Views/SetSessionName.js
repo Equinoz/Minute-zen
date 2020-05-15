@@ -12,22 +12,36 @@ class SetSessionName extends React.Component {
   }
 
   // Fonction fléchée pour binder
-  // Modifie le nom de la séance en cours
   _update_session_name = () => {
-    let newName = this.state.name || this.props.updatingSession.name;
-    let session = { ...this.props.updatingSession, name: newName}
-    const action = { type: "UPDATE", value: session};
-    this.props.dispatch(action);
-    this.props.navigation.goBack();
+    if (this.state.name) {
+      // Si la séance existe déjà on récupère ses périodes, sinon on en crée une nouvelle
+      const periods = (this.props.updatingSession.name) ?
+        [...this.props.updatingSession.periods] :
+        [{ type: "sit", duration: 900, start: 1, end: 1 }];
+
+      // On met à jour la séance avec son nouveau nom
+      const session = { ...this.props.updatingSession, name: this.state.name, periods: periods };
+      const action = { type: "UPDATE", value: session };
+      this.props.dispatch(action);
+      this.props.navigation.navigate("SessionDetails");
+    }
+    else {
+      // Si le champ est vide, retour à la vue précédente selon que la séance existe déjà ou pas
+      if (this.props.updatingSession.name)
+        this.props.navigation.navigate("SessionDetails");
+      else
+        this.props.navigation.goBack();
+    }
   }
 
   render() {
     return (
       <View style={ styles.container }>
         <Text style={ styles.label }>
-          { /* Attention ici la vieille props!!! */ (this.props.action == "create") ? "Indiquez le nom de la séance" : "Modifiez le nom de la séance" /* Attention ici la vieille props!!! */}
+          { (this.props.updatingSession.name == undefined) ? "Indiquez le nom de la séance" : "Modifiez le nom de la séance" }
         </Text>
-        <TextInput style={ styles.input } onChangeText={ text => this.setState({ name: text }) } defaultValue={ this.props.updatingSession.name } placeholder="10 lettres max" maxLength={10} />
+        <TextInput style={ styles.input } onChangeText={ text => this.setState({ name: text }) }
+          defaultValue={ this.props.updatingSession.name } placeholder="10 lettres max" maxLength={10} />
         <CustomButton title="Valider" callback={ this._update_session_name } />
       </View>
     )
@@ -41,7 +55,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   label: {
-    marginTop:10,
+    marginTop: 10,
     marginBottom: 10,
     fontSize: 18
   },
@@ -56,8 +70,8 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => {
-  return state;
+const mapStateToProps = state => {
+return state;
 };
 
 export default connect(mapStateToProps)(SetSessionName);

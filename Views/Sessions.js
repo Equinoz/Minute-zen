@@ -12,24 +12,32 @@ class Sessions extends React.Component {
     super(props);
   }
 
-  // Prend en argument un tableau de periods et renvoie la durée totale des périods en heures et minutes si nécéssaire
+  // Prend en argument un tableau de périodes et renvoie la durée totale des périodes en heures et minutes si nécéssaire
   _get_duration(periods) {
-    let seconds = periods.map(x => x.duration).reduce((sum, i) => sum + i);
+    const seconds = periods.map(x => x.duration).reduce((sum, i) => sum + i);
     return displayDuration(seconds, true);
   }
 
   // Remplace la séance en cours par la séance choisie
   _select_session(session) {
-    const action = { type: "SELECT", value: session};
+    const action = { type: "SELECT", value: session };
     this.props.dispatch(action);
     this.props.navigation.goBack();
   }
 
   // Permet de sélectionner la séance à modifier
   _set_session(updatingSession) {
-    const action = { type: "UPDATE", value: updatingSession};
+    const action = { type: "UPDATE", value: updatingSession };
     this.props.dispatch(action);
     this.props.navigation.navigate("SessionDetails")
+  }
+
+  // Fonction fléchée pour binder
+  // Réinitialise l'objet à modifier pour créer une nouvelle séance
+  _add_session = () => {
+    const action = { type: "UPDATE", value: {} };
+    this.props.dispatch(action);
+    this.props.navigation.navigate("SetSessionName");
   }
 
   render() {
@@ -39,19 +47,19 @@ class Sessions extends React.Component {
         <FlatList
           style={ styles.list_sessions }
           data={ this.props.sessions }
-          keyExtractor={ (item) => item.id.toString() }
+          keyExtractor={ item => item.id.toString() }
           renderItem={ ({item}) =>
             <TouchableOpacity style={ styles.session } onPress={ () => this._select_session(item) } onLongPress={ () => this._set_session(item) }>
               <Text style={ styles.text_session }>{ item.name } - { this._get_duration(item.periods) }</Text>
             </TouchableOpacity>
           }
         />
-        <AddButton text="Créer une séance" callback={ () => this.props.navigation.navigate("AddSession") } />
+        <AddButton text="Créer une séance" callback={ this._add_session } />
         <CustomButton title="Retour" callback={ () => this.props.navigation.goBack() } />
       </View>
     )
   }
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -85,7 +93,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return state;
 };
 

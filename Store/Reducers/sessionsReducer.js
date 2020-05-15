@@ -47,9 +47,11 @@ const _sessions = [
 
 const initialState = { currentSession: {}, sessions: _sessions, updatingSession: {}, periodToUpdate: null }; // Pas oublier de reinitialiser en 'sessions: []' !!
 
-function sessionsReducer (state = initialState, action) {
+function sessionsReducer(state = initialState, action) {
   let nextState,
+      newSession,
       sessions;
+
   switch(action.type) {
     case "SELECT":
       nextState = {
@@ -59,10 +61,11 @@ function sessionsReducer (state = initialState, action) {
       return nextState || state;
 
     case "ADD":
+      newSession = { id: state.sessions.length, ...state.updatingSession };
       nextState = {
         ...state,
         sessions: [
-          action.value,
+          newSession,
           ...state.sessions
         ]
       };

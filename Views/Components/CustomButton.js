@@ -36,12 +36,12 @@ CustomButton.defaultProps = {
     borderRadius: 25,
     elevation: 3
   }
-}
+};
 
 CustomButton.propTypes = {
   style: PropTypes.object,
   title: PropTypes.string.isRequired,
   callback: PropTypes.func.isRequired
-}
+};
 
 export default CustomButton;

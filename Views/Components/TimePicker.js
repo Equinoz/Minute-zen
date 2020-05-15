@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderColor: "#215771"
   }
-})
+});
  
 export default TimePicker;

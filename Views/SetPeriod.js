@@ -10,8 +10,9 @@ import CustomButton from "./Components/CustomButton";
 class SetPeriod extends React.Component {
   constructor(props) {
     super(props);
-    let period = this.props.updatingSession.periods[this.props.periodToUpdate];
+    const period = this.props.updatingSession.periods[this.props.periodToUpdate];
     this.periods = [];
+
     // Selon le type de période on converti les valeurs de la période en valeurs binaires, gérables par le component Radio
     this.state = (period.type != "interval") ?
       {
@@ -27,8 +28,8 @@ class SetPeriod extends React.Component {
   }
 
   // Envoie les validations au reducer
-  _update_session(periods) {
-    const action = { type: "UPDATE", value: {...this.props.updatingSession, periods: periods }};
+  _update_session() {
+    const action = { type: "UPDATE", value: {...this.props.updatingSession, periods: this.periods }};
     this.props.dispatch(action);
   }
 
@@ -49,7 +50,7 @@ class SetPeriod extends React.Component {
       this.periods = this.props.updatingSession.periods;
       this.periods.splice(this.props.periodToUpdate, 1, newPeriod);
 
-      this._update_session(this.periods);
+      this._update_session();
     }
 
     this.props.navigation.goBack();
@@ -65,7 +66,7 @@ class SetPeriod extends React.Component {
       this.periods.splice(this.props.periodToUpdate - 1, 2);
     }
 
-    this._update_session(this.periods);
+    this._update_session();
     this.props.navigation.goBack();
   }
 
@@ -75,8 +76,8 @@ class SetPeriod extends React.Component {
         <Text style={ styles.title }>Séance: { this.props.updatingSession.name }</Text>
         <View style={ styles.form }>
           <Text style={ styles.label }>Durée de la période:</Text>
-          <TimePicker duration={ this.state.duration } callback={duration => this.setState({ duration: duration })} />
-          { this.state.type == "interval" ?
+          <TimePicker duration={ this.state.duration } callback={ duration => this.setState({ duration: duration }) } />
+          { (this.state.type == "interval") ?
             (<Text style={ styles.label }>Période de transition</Text>) : 
             (<View>
               <Text style={ styles.label }>Type de méditation:</Text>
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return state;
 };
 

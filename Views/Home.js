@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.navigation = props.navigation;
   }
 
   // Fonction temporaire
@@ -34,13 +33,13 @@ class Home extends React.Component {
               <Text style={ styles.text_button }>Arrêter</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.navigation.navigate("Sessions")}>
+          <TouchableOpacity onPress={ () => this.props.navigation.navigate("Sessions") }>
             <View style={ styles.button }>
               <Text style={ styles.text_button }>Choisir une séance</Text>
             </View>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={ styles.settings } onPress={() => this.navigation.navigate("Settings")}>
+        <TouchableOpacity style={ styles.settings } onPress={ () => this.props.navigation.navigate("Settings") }>
           <Image
             style={ styles.image_settings }
             source={ require("../pictures/settings.png") }
@@ -93,7 +92,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return state;
 };
 

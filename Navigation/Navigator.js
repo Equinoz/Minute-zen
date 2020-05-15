@@ -6,7 +6,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Home from "../Views/Home";
 import Settings from "../Views/Settings";
 import Sessions from "../Views/Sessions";
-import AddSession from "../Views/AddSession";
 import SessionDetails from "../Views/SessionDetails";
 import SetSessionName from "../Views/SetSessionName";
 import SetPeriod from "../Views/SetPeriod";
@@ -20,7 +19,6 @@ function Navigator() {
         <Stack.Screen name="Home" component={ Home } />
         <Stack.Screen name="Settings" component={ Settings } />
         <Stack.Screen name="Sessions" component={ Sessions } />
-        <Stack.Screen name="AddSession" component={ AddSession } />
         <Stack.Screen name="SessionDetails" component={ SessionDetails } />
         <Stack.Screen name="SetSessionName" component={ SetSessionName } />
         <Stack.Screen name="SetPeriod" component={ SetPeriod } />
