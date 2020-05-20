@@ -3,46 +3,120 @@
 import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
+import { displayDuration } from "./Components/displayDuration";
+import BlinkingText from "./Components/BlinkingText";
+
+const type = Object.freeze({
+  sit: "Assise",
+  stand: "Marche",
+  interval: "Transition"
+});
+
+const mode = Object.freeze({
+  STOP: "stop",
+  RUN: "run",
+  BREAK: "break"
+});
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
+    this.countDown;
+    this.period = 0;
+    this.state = {
+      duration: 0,
+      mode: mode.STOP,
+      blinking: false
+    };
   }
 
-  // Fonction temporaire
-  _display_session() {
-    console.log(this.props.currentSession);
+  // Lance/relance le compte à rebours
+  _run_countDown() {
+    this.countDown = setInterval(() => {
+      if (this.state.duration == 0) {
+        if (this.props.currentSession.periods.length > this.period + 1) {
+          this.period++;
+          this.setState({ duration: this.props.currentSession.periods[this.period].duration });
+        }
+        else
+          this._stop_session();
+      }
+      this.setState({ duration: this.state.duration - 1 })
+    }, 1000);
+  }
+
+  // Démarre une séance de zéro
+  _start_session() {
+    this.period = 0;
+    clearInterval(this.countDown);
+    this.setState({
+      duration: this.props.currentSession.periods[0].duration,
+      mode: mode.RUN
+    });
+    this._run_countDown();
+  }
+
+  // Mets la séance en cours en pause
+  _break_session() {
+    clearInterval(this.countDown);
+    this.setState({ mode: mode.BREAK });
+  }
+
+  // Reprends la séance en cours
+  _resume_session() {
+    this._run_countDown();
+    this.setState({ mode: mode.RUN });
+  }
+
+  // Stoppe la séance en cours
+  _stop_session() {
+    clearInterval(this.countDown);
+    this.setState({ mode: mode.STOP });
   }
 
   render() {
-    return(
-      <View style={ styles.container }>
+    return (
+      <View style={styles.container}>
         <Image
-          style={ styles.image }
-          source={ require("../pictures/bell.png") }
+          style={styles.image}
+          source={require("../pictures/bell.png")}
         />
-        <Text style={ styles.countdown }>17 : 36</Text>
+        {(this.props.currentSession.name) && <Text style={styles.title}>{this.props.currentSession.name}</Text>}
+        {(this.props.currentSession.periods) && (this.state.mode == mode.STOP) && <Text style={styles.countdown}>{displayDuration(this.props.currentSession.periods[0].duration)}</Text>}
+        {(this.state.mode == mode.RUN) && <Text style={styles.countdown}>{displayDuration(this.state.duration)}</Text>}
+        {(this.state.mode == mode.BREAK) && <BlinkingText text={displayDuration(this.state.duration)} />}
+        {(this.state.mode != mode.STOP) && <Text style={styles.period}>{type[this.props.currentSession.periods[this.period].type]}</Text>}
         <View>
-          <TouchableOpacity onPress={ () => this._display_session() }>
-            <View style={ styles.button }>
-              <Text style={ styles.text_button }>Mettre en pause</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <View style={ styles.button }>
-              <Text style={ styles.text_button }>Arrêter</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={ () => this.props.navigation.navigate("Sessions") }>
-            <View style={ styles.button }>
-              <Text style={ styles.text_button }>Choisir une séance</Text>
-            </View>
-          </TouchableOpacity>
+          {(this.props.currentSession.periods) && (this.state.mode == mode.STOP) &&
+            <TouchableOpacity style={styles.button} onPress={() => this._start_session()}>
+              <Text style={styles.text_button}>Démarrer</Text>
+            </TouchableOpacity>
+          }
+          {(this.state.mode == mode.STOP) &&
+            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate("Sessions")}>
+              <Text style={styles.text_button}>Choisir une séance</Text>
+            </TouchableOpacity>
+          }
+          {(this.state.mode == mode.RUN) &&
+            <TouchableOpacity style={styles.button} onPress={() => this._break_session()}>
+              <Text style={styles.text_button}>Pause</Text>
+            </TouchableOpacity>
+          }
+          {(this.state.mode == mode.BREAK) &&
+            <TouchableOpacity style={styles.button} onPress={() => this._resume_session()}>
+              <Text style={styles.text_button}>Reprendre</Text>
+            </TouchableOpacity>
+          }
+          {(this.state.mode != mode.STOP) &&
+            <TouchableOpacity style={styles.button} onPress={() => this._stop_session()}>
+              <Text style={styles.text_button}>Réinitialiser</Text>
+            </TouchableOpacity>
+          }
         </View>
-        <TouchableOpacity style={ styles.settings } onPress={ () => this.props.navigation.navigate("Settings") }>
+        <TouchableOpacity style={styles.settings} onPress={() => this.props.navigation.navigate("Settings")}>
           <Image
-            style={ styles.image_settings }
-            source={ require("../pictures/settings.png") }
+            style={styles.image_settings}
+            source={require("../pictures/settings.png")}
           />
         </TouchableOpacity>
       </View>
@@ -60,11 +134,26 @@ const styles = StyleSheet.create({
   image: {
     height: 150,
     width: 150,
-    marginTop: 20,
+    marginTop: 10,
     borderRadius: 75
   },
+  title: {
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 12,
+    paddingRight: 12,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#305e54",
+    fontSize: 30,
+    color: "#0e211f"
+  },
   countdown: {
-    fontSize: 70,
+    fontSize: 55,
+    color: "#0e211f"
+  },
+  period: {
+    fontSize: 30,
     color: "#0e211f"
   },
   button: {

@@ -41,6 +41,19 @@ const _sessions = [
     periods: [
       {type: "sit", duration: 50000, start: 1, end: 1}
     ]
+  },
+  {
+    id: 4,
+    name: "Expresse",
+    periods: [
+      {type: "sit", duration: 30, start: 1, end: 1},
+      {type: "interval", duration: 20},
+      {type: "stand", duration: 30, start: 3, end: 1},
+      {type: "interval", duration: 20},
+      {type: "stand", duration: 30, start: 1, end: 3},
+      {type: "interval", duration: 20},
+      {type: "sit", duration: 30, start: 3, end: 3}
+    ]
   }
 ];
   
@@ -75,7 +88,7 @@ function sessionsReducer(state = initialState, action) {
       nextState = {
         ...state,
         updatingSession: action.value
-      }
+      };
       return nextState || state;
 
     case "VALID_UPDATING":
@@ -84,17 +97,17 @@ function sessionsReducer(state = initialState, action) {
         ...state,
         sessions: sessions,
         updatingSession: {}
-      }
+      };
       return nextState || state;
 
     case "DELETE":
+      nextState = (state.currentSession.id == action.value) ? { currentSession: {} } : { ...state };
+
       sessions = state.sessions.filter(item => item.id != action.value);
       sessions.forEach((item, index) => item.id = index);
-      nextState = {
-        ...state,
-        sessions: sessions,
-        updatingSession: {}
-      }
+
+      nextState.sessions = sessions;
+      nextState.updatingSession = {};
       return nextState || state;
 
     case "SELECT_PERIOD":
