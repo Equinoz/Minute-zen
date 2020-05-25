@@ -4,6 +4,7 @@ import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import { displayDuration } from "./Components/displayDuration";
+import { Audio } from "expo-av";
 import BlinkingText from "./Components/BlinkingText";
 
 const type = Object.freeze({
@@ -30,23 +31,52 @@ class Home extends React.Component {
     };
   }
 
+  // Joue un son de cloche selon l'option choisie
+  async _ring_bell(knocks) {
+    const soundObject = new Audio.Sound();
+    try {
+      if (knocks == 1)
+        await soundObject.loadAsync(require("../assets/sounds/one_bell.mp3"));
+      else
+        await soundObject.loadAsync(require("../assets/sounds/three_bells.mp3"));
+      await soundObject.playAsync();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   // Lance/relance le compte à rebours
   _run_countDown() {
     this.countDown = setInterval(() => {
+      // Fin de la période en cours
       if (this.state.duration == 0) {
+        // Si ce n'est pas une période de transition on joue un son de cloche à la fin de la période
+        if (this.props.currentSession.periods[this.period].type != "interval")
+          this._ring_bell(this.props.currentSession.periods[this.period].end);
+
+        // Mise à jour de la durée
         if (this.props.currentSession.periods.length > this.period + 1) {
           this.period++;
+          // Si la période qui démarre n'est pas une période de transiton on joue un son de cloche
+          if (this.props.currentSession.periods[this.period].type != "interval")
+            this._ring_bell(this.props.currentSession.periods[this.period].start);
           this.setState({ duration: this.props.currentSession.periods[this.period].duration });
         }
+
+        // Fin de la séance
         else
           this._stop_session();
       }
-      this.setState({ duration: this.state.duration - 1 })
+      // Décompte du temps
+      else
+        this.setState({ duration: this.state.duration - 1 });
     }, 1000);
   }
 
   // Démarre une séance de zéro
   _start_session() {
+    // Son de cloche en début de séance
+    this._ring_bell(this.props.currentSession.periods[0].start);
     this.period = 0;
     clearInterval(this.countDown);
     this.setState({
@@ -79,7 +109,7 @@ class Home extends React.Component {
       <View style={styles.container}>
         <Image
           style={styles.image}
-          source={require("../pictures/bell.png")}
+          source={require("../assets/pictures/bell.png")}
         />
         {(this.props.currentSession.name) && <Text style={styles.title}>{this.props.currentSession.name}</Text>}
         {(this.props.currentSession.periods) && (this.state.mode == mode.STOP) && <Text style={styles.countdown}>{displayDuration(this.props.currentSession.periods[0].duration)}</Text>}
@@ -116,7 +146,7 @@ class Home extends React.Component {
         <TouchableOpacity style={styles.settings} onPress={() => this.props.navigation.navigate("Settings")}>
           <Image
             style={styles.image_settings}
-            source={require("../pictures/settings.png")}
+            source={require("../assets/pictures/settings.png")}
           />
         </TouchableOpacity>
       </View>

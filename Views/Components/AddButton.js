@@ -14,7 +14,7 @@ class AddButton extends React.Component {
       <TouchableOpacity style={ styles.add_new_element } onPress={ () => this.props.callback() }>
         <Image
           style={ styles.image }
-          source={ require("../../pictures/add.png") }
+          source={ require("../../assets/pictures/add.png") }
         />
         <Text style={ styles.text_new_element }>{ this.props.text }</Text>
       </TouchableOpacity>
