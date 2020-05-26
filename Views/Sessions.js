@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  return state;
+  return { sessions: state.sessionsReducer.sessions };
 };
 
 export default connect(mapStateToProps)(Sessions);

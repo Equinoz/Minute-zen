@@ -1,64 +1,6 @@
 // Reducer gérant les séances
 
-// tableau de séances à supprimer par la suite
-const _sessions = [
-  {
-    id: 0,
-    name: "Simple",
-    periods: [
-      {type: "sit", duration: 600, start: 1, end: 1},
-      {type: "interval", duration: 60},
-      {type: "stand", duration: 300, start: 1, end: 3}
-    ]
-  },
-  {
-    id: 1,
-    name: "Complète",
-    periods: [
-      {type: "sit", duration: 1000, start: 3, end: 1},
-      {type: "interval", duration: 60},
-      {type: "sit", duration: 500, start: 1, end: 1},
-      {type: "interval", duration: 180},
-      {type: "sit", duration: 10000, start: 1, end: 3},
-      {type: "interval", duration: 300},
-      {type: "sit", duration: 1000, start: 3, end: 1},
-      {type: "interval", duration: 60},
-      {type: "sit", duration: 500, start: 1, end: 1},
-      {type: "interval", duration: 60},
-      {type: "sit", duration: 260, start: 1, end: 3}
-    ]
-  },
-  {
-    id: 2,
-    name: "Courte",
-    periods: [
-      {type: "sit", duration: 60, start: 1, end: 1}
-    ]
-  },
-  {
-    id: 3,
-    name: "Longue",
-    periods: [
-      {type: "sit", duration: 50000, start: 1, end: 1}
-    ]
-  },
-  {
-    id: 4,
-    name: "Expresse",
-    periods: [
-      {type: "sit", duration: 30, start: 1, end: 1},
-      {type: "interval", duration: 20},
-      {type: "stand", duration: 30, start: 3, end: 1},
-      {type: "interval", duration: 20},
-      {type: "stand", duration: 30, start: 1, end: 3},
-      {type: "interval", duration: 20},
-      {type: "sit", duration: 30, start: 3, end: 3}
-    ]
-  }
-];
-  
-
-const initialState = { currentSession: {}, sessions: _sessions, updatingSession: {}, periodToUpdate: null }; // Pas oublier de reinitialiser en 'sessions: []' !!
+const initialState = { currentSession: {}, sessions: [], updatingSession: {}, periodToUpdate: null };
 
 function sessionsReducer(state = initialState, action) {
   let nextState,

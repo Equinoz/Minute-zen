@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  return state;
+  return { updatingSession: state.sessionsReducer.updatingSession };
 };
 
 export default connect(mapStateToProps)(SessionDetails);

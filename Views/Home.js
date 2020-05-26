@@ -1,7 +1,7 @@
 // Vue "Home"
 
 import React from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Vibration } from "react-native";
 import { connect } from "react-redux";
 import { displayDuration } from "./Components/displayDuration";
 import { Audio } from "expo-av";
@@ -31,17 +31,25 @@ class Home extends React.Component {
     };
   }
 
-  // Joue un son de cloche selon l'option choisie
+  // Joue un son de cloche ou vibre selon l'option choisie
   async _ring_bell(knocks) {
-    const soundObject = new Audio.Sound();
-    try {
+    if (this.props.option != "vibration") {
+      const soundObject = new Audio.Sound();
+      try {
+        if (knocks == 1)
+          await soundObject.loadAsync(require("../assets/sounds/one_bell.mp3"));
+        else
+          await soundObject.loadAsync(require("../assets/sounds/three_bells.mp3"));
+        await soundObject.playAsync();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    if (this.props.option != "sound") {
       if (knocks == 1)
-        await soundObject.loadAsync(require("../assets/sounds/one_bell.mp3"));
+        Vibration.vibrate(700);
       else
-        await soundObject.loadAsync(require("../assets/sounds/three_bells.mp3"));
-      await soundObject.playAsync();
-    } catch (err) {
-      console.log(err);
+        Vibration.vibrate([300, 600, 2200, 600, 2100, 600]);
     }
   }
 
@@ -106,47 +114,48 @@ class Home extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={ styles.container }>
         <Image
-          style={styles.image}
-          source={require("../assets/pictures/bell.png")}
+          style={ styles.image }
+          source={ require("../assets/pictures/bell.png") }
         />
-        {(this.props.currentSession.name) && <Text style={styles.title}>{this.props.currentSession.name}</Text>}
-        {(this.props.currentSession.periods) && (this.state.mode == mode.STOP) && <Text style={styles.countdown}>{displayDuration(this.props.currentSession.periods[0].duration)}</Text>}
-        {(this.state.mode == mode.RUN) && <Text style={styles.countdown}>{displayDuration(this.state.duration)}</Text>}
-        {(this.state.mode == mode.BREAK) && <BlinkingText text={displayDuration(this.state.duration)} />}
-        {(this.state.mode != mode.STOP) && <Text style={styles.period}>{type[this.props.currentSession.periods[this.period].type]}</Text>}
+        {(this.props.currentSession.name) && <Text style={ styles.title }>{ this.props.currentSession.name }</Text>}
+        {(this.props.currentSession.periods) && (this.state.mode == mode.STOP) &&
+          <Text style={ styles.countdown }>{ displayDuration(this.props.currentSession.periods[0].duration) }</Text>}
+        {(this.state.mode == mode.RUN) && <Text style={ styles.countdown }>{ displayDuration(this.state.duration) }</Text>}
+        {(this.state.mode == mode.BREAK) && <BlinkingText text={ displayDuration(this.state.duration) } />}
+        {(this.state.mode != mode.STOP) && <Text style={ styles.period }>{ type[this.props.currentSession.periods[this.period].type] }</Text>}
         <View>
           {(this.props.currentSession.periods) && (this.state.mode == mode.STOP) &&
-            <TouchableOpacity style={styles.button} onPress={() => this._start_session()}>
-              <Text style={styles.text_button}>Démarrer</Text>
+            <TouchableOpacity style={ styles.button } onPress={ () => this._start_session() }>
+              <Text style={ styles.text_button }>Démarrer</Text>
             </TouchableOpacity>
           }
           {(this.state.mode == mode.STOP) &&
-            <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate("Sessions")}>
-              <Text style={styles.text_button}>Choisir une séance</Text>
+            <TouchableOpacity style={ styles.button } onPress={ () => this.props.navigation.navigate("Sessions") }>
+              <Text style={ styles.text_button }>Choisir une séance</Text>
             </TouchableOpacity>
           }
           {(this.state.mode == mode.RUN) &&
-            <TouchableOpacity style={styles.button} onPress={() => this._break_session()}>
-              <Text style={styles.text_button}>Pause</Text>
+            <TouchableOpacity style={ styles.button } onPress={ () => this._break_session() }>
+              <Text style={ styles.text_button }>Pause</Text>
             </TouchableOpacity>
           }
           {(this.state.mode == mode.BREAK) &&
-            <TouchableOpacity style={styles.button} onPress={() => this._resume_session()}>
-              <Text style={styles.text_button}>Reprendre</Text>
+            <TouchableOpacity style={ styles.button } onPress={ () => this._resume_session() }>
+              <Text style={ styles.text_button }>Reprendre</Text>
             </TouchableOpacity>
           }
           {(this.state.mode != mode.STOP) &&
-            <TouchableOpacity style={styles.button} onPress={() => this._stop_session()}>
-              <Text style={styles.text_button}>Réinitialiser</Text>
+            <TouchableOpacity style={ styles.button } onPress={ () => this._stop_session() }>
+              <Text style={ styles.text_button }>Réinitialiser</Text>
             </TouchableOpacity>
           }
         </View>
-        <TouchableOpacity style={styles.settings} onPress={() => this.props.navigation.navigate("Settings")}>
+        <TouchableOpacity style={ styles.settings } onPress={ () => this.props.navigation.navigate("Settings") }>
           <Image
-            style={styles.image_settings}
-            source={require("../assets/pictures/settings.png")}
+            style={ styles.image_settings }
+            source={ require("../assets/pictures/settings.png") }
           />
         </TouchableOpacity>
       </View>
@@ -212,7 +221,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  return state;
+  return {
+    currentSession: state.sessionsReducer.currentSession,
+    option: state.settingsReducer.option
+  }
 };
 
 export default connect(mapStateToProps)(Home);

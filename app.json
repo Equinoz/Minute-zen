@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Minute-Zen",
-    "slug": "Minute-Zen",
+    "name": "Minute Zen",
+    "slug": "MinuteZen",
     "platforms": [
       "ios",
       "android",
@@ -13,7 +13,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#61867e"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,7 +22,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    }
+      "supportsTablet": true,
+      "bundleIdentifier": "com.minutezen"
+    },
+    "android": {
+      "package": "com.minutezen"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }

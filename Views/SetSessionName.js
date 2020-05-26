@@ -61,17 +61,17 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "#f7f6ea",
-    height: 40,
+    height: 45,
     width: 220,
     marginBottom: 15,
     textAlign: "center",
-    borderRadius: 10,
+    borderRadius: 12,
     fontSize: 20
   }
 });
 
 const mapStateToProps = state => {
-return state;
+  return { updatingSession: state.sessionsReducer.updatingSession };
 };
 
 export default connect(mapStateToProps)(SetSessionName);

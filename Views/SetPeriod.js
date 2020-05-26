@@ -81,15 +81,15 @@ class SetPeriod extends React.Component {
             (<Text style={ styles.label }>Période de transition</Text>) : 
             (<View>
               <Text style={ styles.label }>Type de méditation:</Text>
-              <Radio value={ this.state.type }
+              <Radio value={ this.state.type } style={ style.radio }
                 callback={ value => this.setState({ type: value }) }
                 radioProps={[ { label: "Assise", value: 0 }, { label: "Marchée", value: 1 } ]} />
               <Text style={ styles.label }>Coups de cloches au début:</Text>
-              <Radio value={ this.state.start }
+              <Radio value={ this.state.start } style={ style.radio }
                 callback={ value => this.setState({ start: value }) }
                 radioProps={[ { label: "Un", value: 0 }, { label: "Trois", value: 1 } ]} />
               <Text style={ styles.label }>Coups de cloches à la fin:</Text>
-              <Radio value={ this.state.end }
+              <Radio value={ this.state.end } style={ style.radio }
                 callback={ value => this.setState({ end: value }) }
                 radioProps={[ { label: "Un", value: 0 }, { label: "Trois", value: 1 } ]} />
             </View>)
@@ -103,6 +103,16 @@ class SetPeriod extends React.Component {
         </View>
       </View>
     )
+  }
+};
+
+const style = {
+  radio: {
+    formHorizontal: true,
+    buttonColor: "#215771",
+    buttonSize: 10,
+    buttonOuterSize: 18,
+    labelStyle: {fontSize: 18, color: "#0e211f"}
   }
 };
 
@@ -147,7 +157,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-  return state;
+  return {
+    updatingSession: state.sessionsReducer.updatingSession,
+    periodToUpdate: state.sessionsReducer.periodToUpdate
+  }
 };
 
 export default connect(mapStateToProps)(SetPeriod);
