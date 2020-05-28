@@ -1,10 +1,12 @@
 // Vue "Home"
 
 import React from "react";
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import { StyleSheet, Text, View, Image, TouchableOpacity, Vibration } from "react-native";
 import { connect } from "react-redux";
 import { displayDuration } from "./Components/displayDuration";
 import { Audio } from "expo-av";
+import SystemSetting from "react-native-system-setting";
 import BlinkingText from "./Components/BlinkingText";
 
 const type = Object.freeze({
@@ -27,7 +29,8 @@ class Home extends React.Component {
     this.state = {
       duration: 0,
       mode: mode.STOP,
-      blinking: false
+      blinking: false,
+      disableAirplaneButton: false
     };
   }
 
@@ -83,6 +86,7 @@ class Home extends React.Component {
 
   // Démarre une séance de zéro
   _start_session() {
+    activateKeepAwake();
     // Son de cloche en début de séance
     this._ring_bell(this.props.currentSession.periods[0].start);
     this.period = 0;
@@ -108,8 +112,24 @@ class Home extends React.Component {
 
   // Stoppe la séance en cours
   _stop_session() {
+    deactivateKeepAwake();
     clearInterval(this.countDown);
     this.setState({ mode: mode.STOP });
+
+    // Si le mode avion est activé et qu'il faut proposer de le désactiver, affiche le bouton correspondant
+    SystemSetting.isAirplaneEnabled()
+      .then(enable => {
+        if (enable && this.props.must_disable_airplane) {
+          this.props.dispatch({ type: "SWITCH", value: false});
+          this.setState({ disableAirplaneButton: true });
+        }
+    });
+  }
+
+  // Désactive le bouton mode avion et propose de désactiver le mode avion
+  _disable_airplane_mode() {
+    this.setState({ disableAirplaneButton: false });
+    SystemSetting.switchAirplane(() => {});
   }
 
   render() {
@@ -125,7 +145,12 @@ class Home extends React.Component {
         {(this.state.mode == mode.RUN) && <Text style={ styles.countdown }>{ displayDuration(this.state.duration) }</Text>}
         {(this.state.mode == mode.BREAK) && <BlinkingText text={ displayDuration(this.state.duration) } />}
         {(this.state.mode != mode.STOP) && <Text style={ styles.period }>{ type[this.props.currentSession.periods[this.period].type] }</Text>}
-        <View>
+        <View style={ styles.buttons }>
+          {(this.state.disableAirplaneButton) &&
+            <TouchableOpacity style={ [styles.button, styles.disableAirplaneButton] } onPress={ () => this._disable_airplane_mode() }>
+              <Text style={ styles.text_button }>Désactiver le mode avion</Text>
+            </TouchableOpacity>
+          }
           {(this.props.currentSession.periods) && (this.state.mode == mode.STOP) &&
             <TouchableOpacity style={ styles.button } onPress={ () => this._start_session() }>
               <Text style={ styles.text_button }>Démarrer</Text>
@@ -195,6 +220,9 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "#0e211f"
   },
+  buttons: {
+    alignItems: "center"
+  },
   button: {
     backgroundColor: "#215771",
     height: 60,
@@ -204,6 +232,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 30,
     elevation: 3
+  },
+  disableAirplaneButton: {
+    backgroundColor: "#05828f",
+    height: 45,
+    width: 240,
   },
   text_button: {
     fontSize: 19,
@@ -223,7 +256,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   return {
     currentSession: state.sessionsReducer.currentSession,
-    option: state.settingsReducer.option
+    option: state.settingsReducer.option,
+    must_disable_airplane: state.settingsReducer.must_disable_airplane
   }
 };
 
